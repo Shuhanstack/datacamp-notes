@@ -1,0 +1,173 @@
+---
+title: "Distributions in R"
+author: "Shuhan Song"
+date: "2022-12-27"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE, 
+                      warning = FALSE)
+library(tidyverse)
+library(patchwork)
+```
+
+## Set Up Distribution Simulations
+
+```{r}
+distribution_fcn_ls = c(rbeta=rbeta, rbinom=rbinom, rcauchy=rcauchy, rchisq=rchisq, rexp=rexp, rf=rf, rgamma=rgamma, rgeom=rgeom, rhyper=rhyper, rlnorm=rlnorm, rlogis=rlogis, rnbinom=rnbinom, rnorm=rnorm, rpois=rpois, rsignrank=rsignrank, rt=rt, runif=runif, rweibull=rweibull, rwilcox=rwilcox)
+
+distribution_fcn_name = names(distribution_fcn_ls)
+
+distribution_name = c("Beta", "Binomial", "Cauchy", "Chi-squared", "Exponential", "F", "Gamma", "Geometric", "Hypergeometric", "Lognormal", "Logistic", "Negative binomial", "Normal", "Poisson", "Wilcoxon signed rank", "t", "Uniform", "Weibull", "Wilcoxon rank sum")
+
+n = 10000
+
+sim_fcn = function(fcn, dist_name, bw = 0.01, ...){
+  set.seed(123)
+  
+  df = data.frame(x = fcn(n = n, ...))
+  
+  p1 = ggplot(df, 
+         aes(x = x)) +
+       geom_histogram(binwidth = bw, 
+                      color = "grey40",
+                      fill = "white") +
+       theme_bw() +
+       labs(title = paste(str_to_title(dist_name), "Distribution")) 
+  
+  p2 = ggplot(df, 
+         aes(x = x)) +
+       geom_density(color = "red")+
+       theme_bw() +
+       labs(title = paste(str_to_title(dist_name), "Distribution")) 
+  
+  p1+p2
+  
+}
+```
+
+
+## `r paste(str_to_title(distribution_name[1]), "Distribution", paste0(distribution_fcn_name[1],"()"))`
+
+```{r}
+args(distribution_fcn_ls$rbeta)
+```
+
+
+```{r}
+distribution_fcn_ls$rbeta %>% 
+  sim_fcn(dist_name = distribution_name[1], 
+          bw = 0.01,
+          # distribution parameters ---
+          shape1 = 5, shape2 = 100 # non-negative parameters of Beta distribution
+          )
+```
+
+
+```{r}
+distribution_fcn_ls$rbeta %>% 
+  sim_fcn(dist_name = distribution_name[1], 
+          bw = 0.02,
+          # distribution parameters ---
+          shape1 = 50, shape2 = 5 # non-negative parameters of Beta distribution
+          )
+```
+
+
+## `r paste(str_to_title(distribution_name[2]), "Distribution", paste0(distribution_fcn_name[2],"()"))`
+
+```{r}
+args(distribution_fcn_ls$rbinom)
+```
+
+```{r}
+distribution_fcn_ls$rbinom %>% 
+  sim_fcn(dist_name = distribution_name[2], 
+          bw = 5,
+          # distribution parameters ---
+          size = 1000, # number of trails
+          prob = 0.25 # probability of success on each trail
+          )
+```
+
+
+
+## `r paste(str_to_title(distribution_name[3]), "Distribution", paste0(distribution_fcn_name[3],"()"))`
+
+
+```{r}
+args(distribution_fcn_ls$rcauchy)
+```
+
+```{r}
+distribution_fcn_ls$rcauchy %>% 
+  sim_fcn(dist_name = distribution_name[3], 
+          bw = 5,
+          # distribution parameters ---
+          location = 0, # number of trails
+          scale = 1 # probability of success on each trail
+          )
+```
+
+
+
+```{r}
+distribution_fcn_ls$rcauchy %>% 
+  sim_fcn(dist_name = distribution_name[3], 
+          bw = 0.1,
+          # distribution parameters ---
+          location = 0, # number of trails
+          scale = 0.01 # probability of success on each trail
+          )
+```
+
+
+
+```{r}
+distribution_fcn_ls$rcauchy %>% 
+  sim_fcn(dist_name = distribution_name[3], 
+          bw = 0.01,
+          # distribution parameters ---
+          location = 20, # number of trails
+          scale = 0.01 # probability of success on each trail
+          )
+```
+
+
+
+
+## `r paste(str_to_title(distribution_name[4]), "Distribution", paste0(distribution_fcn_name[4],"()"))`
+
+```{r}
+args(distribution_fcn_ls$rchisq)
+```
+
+```{r}
+distribution_fcn_ls$rchisq %>% 
+  sim_fcn(dist_name = distribution_name[4], 
+          bw = 5,
+          # distribution parameters ---
+          df = 100, # degree of freedom
+          ncp = 0 # non-centrality parameter
+          )
+```
+
+```{r}
+distribution_fcn_ls$rchisq %>% 
+  sim_fcn(dist_name = distribution_name[4], 
+          bw = 5,
+          # distribution parameters ---
+          df = 100, # degree of freedom
+          ncp = 20 # non-centrality parameter (non-negative)
+          )
+```
+
+
+
+
+
